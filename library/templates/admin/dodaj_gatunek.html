@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>BIBLIOTEKA</title>
+{% endblock %}
+
+{% block header %}
+<form action="{{ url_for('books.index') }}">
+    <input class="button" type="submit" value="POWRÓT DO MENU" />
+</form>
+<br/><br/>
+{% endblock %}
+
+{% block content %}
+<fieldset style="width: 800px; display: flex; flex-direction: column; justify-items: left">
+    <form action="./dodaj-gatunek" method="post" id="dodaj-gatunek-form">
+        <label for="nazwa">NAZWA</label>
+        <input style="margin: 20px" type="text" name="nazwa" id="nazwa">
+        <button class="button" type="submit">DODAJ GATUNEK</button>
+    </form>
+</fieldset>
+
+{% endblock %}

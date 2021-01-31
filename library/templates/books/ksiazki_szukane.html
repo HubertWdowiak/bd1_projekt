@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>BIBLIOTEKA</title>
+{% endblock %}
+
+{% block header %}
+  <form action="/books">
+    <input class="button" type="submit" value="POWRÓT DO MENU" />
+  </form>
+  <br/><br/>
+{% endblock %}
+
+{% block content %}
+<fieldset>
+    <h3>Książki z "{{data.klucz}}"</h3>
+   <table>
+    {% if data.length != 0 %}
+    <thead>
+      {% for info in data.books[0] if info not in ('ilosc_egzemplarzy', 'id') %}
+      <th>{{info}}</th>
+      {% endfor %}
+      <th></th>
+    </thead>
+    {% for book in data.books %}
+      <tr>
+        {% for info in book if info not in ('ilosc_egzemplarzy', 'id')%}
+        <td>{{book[info]}}</td>
+        {% endfor %}
+        <td style="display: flex; align-items: center; justify-content: space-between; border: none; border-top: 1px solid black; flex-direction: row;">
+          {% if book.id in data.reserved %}
+            <form method="post" action="{{url_for('books.rezerwacja', book_id=book.id)}}">
+              <input disabled class="disabled-button" type="submit" value="ZAREZERWOWANO" />
+            </form>
+          {% elif book.id in data.borrowed %}
+             <form method="post" action="{{url_for('books.return_book', book_id=book.id)}}">
+              <input class="button" type="submit" value="ODDAJ" />
+            </form>
+          {% elif book.ilosc_egzemplarzy %}
+            <form method="post" action="{{url_for('books.borrow', book_id=book.id)}}">
+              <input class="button" type="submit" value="WYPOŻYCZ" />
+            </form>
+          {% else %}
+            <form method="post" action="{{url_for('books.rezerwacja', book_id=book.id)}}">
+              <input class="button" type="submit" value="ZAREZERWUJ" />
+            </form>
+          {% endif %}
+          {% if g.user['uprawnienia_admina'] %}
+            <div id="book-{{book['id']}}" style="display: none">
+              <form method="post" action="{{ url_for('admin.dodaj_egzemplarz') }}">
+                <input hidden name="id" type="number" value="{{book['id']}}">
+                ISBN
+                <input name="isbn" type='number'>
+                ILOŚĆ
+                <input name="ilosc" value="1" type='number'>
+                <input class="button" type="submit" value="DODAJ" />
+              </form>
+            </div>
+            <div class="button" onclick="document.getElementById('book-{{book['id']}}').style.display='block'; this.style.display='none'; document.getElementById('dodaj-{{book['id']}}').style.display='block'">Dodaj egzemplarze</div>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    {% endif %}
+  </table>
+</fieldset>
+{% endblock %}

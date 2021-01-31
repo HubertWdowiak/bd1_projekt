@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>BIBLIOTEKA</title>
+{% endblock %}
+
+{% block header %}
+<form action="{{ url_for('books.all_books') }}">
+    <input class="button" type="submit" value="POWRÓT DO MENU" />
+</form>
+<br/><br/>
+{% endblock %}
+
+{% block content %}
+<div style="display: flex">
+    <div class="info">Liczba książek w bibliotece: <p>{{data.book_sum[0]}}</p></div>
+    <div class="info">Najpopularniejsza książka: <p>{{data.best_book[0]}}</p></div>
+    <div class="info">Najpopularniejszy autor: <p>{{data.best_author[0] + ' ' + data.best_author[1] + data.best_author[2]}}</p></div>
+</div>
+{% endblock %}

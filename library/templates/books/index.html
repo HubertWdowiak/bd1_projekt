@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>BIBLIOTEKA</title>
+{% endblock %}
+
+{% block content %}
+<div id="idx-form">
+  <form action="{{ url_for('books.all_books') }}">
+    <input class="button" type="submit" value="WSZYSTKIE KSIĄŻKI" />
+  </form>
+  <form action="{{ url_for('books.statystyki') }}">
+    <input class="button" type="submit" value="ZOBACZ STATYSTYKI" />
+  </form>
+  {% if g.user %}
+    {% if g.user['uprawnienia_admina'] %}
+      <br/><br/>
+      <form action="{{ url_for('admin.add_book') }}">
+        <input class="button" type="submit" value="DODAJ KSIĄŻKĘ" />
+      </form>
+        <br/><br/>
+      <form action="{{ url_for('admin.add_author') }}">
+        <input class="button" type="submit" value="DODAJ AUTORA" />
+      </form>
+      <br/><br/>
+      <form action="{{ url_for('admin.dodaj_gatunek') }}">
+        <input class="button" type="submit" value="DODAJ GATUNEK" />
+      </form>
+      <br/><br/>
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+  {% block head %}
+  {% endblock %}
+  <link type="text/css" rel="stylesheet" href="../static/styles.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="../static/scripts.js"></script>
+  <title>Biblioteka</title>
+</head>
+
+<div style="display: flex; background-color: rgba(255,255,255, 0.5); padding: 20px; margin: 20px">
+  <div>
+    {% block header %}
+    {% endblock %}
+  </div>
+  <form action="/books/all">
+    <input class="button" type="submit" value="BIBLIOTEKA" />
+  </form>
+  <div style="display: flex; align-items: flex-end; flex-direction: column; width: 100%">
+    {% if g.user %}
+    <div id="login_info">
+      {% if g.user['uprawnienia_admina'] %}
+        ADMIN:
+      {% endif %}
+      {{g.user['login']}}
+      <form action="/auth/logout">
+        <input class="button" type="submit" value="WYLOGUJ" />
+      </form>
+    </div>
+  {% endif %}
+  </div>
+</div>
+<body>
+  <div style="display: flex; flex-direction:column; justify-content:center; width: 100%">
+  <div class="content">
+    {% for message in get_flashed_messages() %}
+      <div class="flash">{{ message }}</div>
+      <br/>
+    {% endfor %}
+    {% block content %}
+    {% endblock %}
+  </div>
+    </div>
+  <footer class="footer">
+  </footer>
+</body>
+
+</html>

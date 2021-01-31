@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>BIBLIOTEKA</title>
+{% endblock %}
+
+{% block header %}
+<form action="{{ url_for('books.index') }}">
+    <input class="button" type="submit" value="POWRÓT DO MENU" />
+</form>
+<br/><br/>
+{% endblock %}
+
+{% block content %}
+<fieldset style="width: 800px; display: flex; flex-direction: column; justify-items: left">
+    <form action="./add-author" method="post" id="dodaj_autora_form">
+        <div>
+        <label for="imie">IMIE</label>
+        <input style="margin: 20px" type="text" name="imie" id="imie">
+        </div>
+        <div>
+        <label for="pozostale_imiona">POZOSTAŁE IMIONA</label>
+        <input style="width: 50%;" type="text" name="pozostale_imiona" id="pozostale_imiona">
+        </div>
+        <div>
+            <label for="nazwisko">NAZWISKO</label>
+            <input style="margin: 20px" type="text" name="nazwisko" id="nazwisko">
+        </div>
+        <button class="button" style="width: auto" type="submit">DODAJ AUTORA</button>
+    </form>
+</fieldset>
+
+{% endblock %}

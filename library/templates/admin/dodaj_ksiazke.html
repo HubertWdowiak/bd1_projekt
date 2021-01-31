@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title>BIBLIOTEKA</title>
+{% endblock %}
+
+{% block header %}
+<form action="{{ url_for('books.all_books') }}">
+    <input class="button" type="submit" value="POWRÓT DO MENU" />
+</form>
+<br/><br/>
+{% endblock %}
+
+{% block content %}
+<div id="error-container"></div>
+<fieldset style="width: 800px; display: flex; flex-direction: column; justify-items: left">
+    <legend>
+        <h3>DODAJ KSIĄŻKĘ</h3>
+    </legend>
+    <div>
+        <form action="./add-book" method="post" id="add-book-form" style="display:flex; flex-direction: column; text-align: left">
+            <div>
+                <label for="title-book">Tytuł książki: </label>
+                <input type="text" name="title-book" id="title-book" maxlength="256" required>
+            </div>
+            <div style="padding-top: 10px;">
+                <label for="isbn-book">ISBN: </label>
+                <input type="text" name="isbn-book" id="isbn-book"
+                    pattern="^(?:\d{3}-\d{2}-\d{5}-\d{2}-\d|\d{2}-\d{4}-\d{3}-\d|\d{13}|\d{10})$" required>
+                <small>Wymagany format ISBN-10 lub ISBN-13. Nie ma potrzeby dodawania separatora pomiędzy liczbami.</small>
+            </div>
+            <div style="padding-top: 10px;">
+                <label for="publisher-book">Wydawca: </label>
+                <input type="text" name="publisher-book" id="publisher-book" maxlength="128" required>
+            </div>
+            <div style="padding-top: 10px;">
+                <label for="year-book">Rok publikacji: </label>
+                <input type="number" name="year-book" id="year-book" required>
+            </div>
+            <div style="padding-top: 10px;">
+                <label for="available-book">Liczba dostępnych książek: </label>
+                <input type="number" name="available-book" id="available-book" min="0" value="0" required>
+            </div>
+            <div>
+                <h5>Autorzy</h5>
+                <div id="authors-container">
+                    <div id="author-1" class="select-option">
+                        <select class="author-select" id="author-select-1">
+                            <option value="-1" selected hidden>---</option>
+                            {% for author in data.authors %}
+                            <option value="{{ author.id }}">{{ author.autor }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <button button="button" id="add-author">Dodaj kolejnego autora</button>
+            </div>
+            <div>
+                <h5>Gatunki</h5>
+                <div id="genres-container">
+                    <div id="genre-1" class="select-option">
+                        <select class="genre-select" id="genre-select-1">
+                            <option value="-1" selected hidden>---</option>
+                            {% for genre in data.genres %}
+                            <option value="{{ genre.id }}">{{ genre.nazwa }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <button type="button" id="add-genre">Dodaj kolejne gatunki</button>
+            </div>
+            <div style="padding-top: 2rem;">
+                <button type="submit">Zapisz</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        function removeTarget(target) {
+            $(target).remove();
+        }
+
+        $(() => {
+            let author_next_idx = 2;
+            let genre_next_idx = 2;
+
+
+            $('#add-author').on('click', (e) => {
+                e.preventDefault();
+                let new_div_id = `author-${author_next_idx}`;
+                let div = $(document.createElement('div')).attr('id', new_div_id).appendTo(
+                    '#authors-container').addClass('select-option');
+                let new_select_id = `author-select-${author_next_idx++}`;
+                let new_author_select = $('#author-select-1').clone().attr('id', new_select_id).val(
+                    '-1').appendTo(div);
+
+                div.append(
+                    `<button type="button" onclick="removeTarget('#${new_div_id}')">Remove</button>`
+                );
+                return false;
+            });
+
+            $('#add-genre').on('click', (e) => {
+                e.preventDefault();
+                let new_div_id = `genre-${genre_next_idx}`;
+                let div = $(document.createElement('div')).attr('id',
+                    new_div_id).appendTo('#genres-container').addClass('select-option');
+                let new_select_id = `genre-select-${genre_next_idx++}`;
+                let new_genre_select = $('#genre-select-1').clone().attr('id', new_select_id).val('-1')
+                    .appendTo(div);
+
+                div.append(
+                    `<button type="button" onclick="removeTarget('#${new_div_id}')">Remove</button>`
+                );
+                return false;
+            });
+
+            $('#add-book-form').on('submit', (e) => {
+                e.preventDefault();
+                sendRequest('./add-book',
+                    () => {
+                        return prepareAddEditForm('#add-book-form');
+                    },
+                    (data) => {
+                        if (data.url) {
+                            window.location.href = data.url;
+                        }
+                    },
+                    (data) => {
+                        let error_container = $('#error-container').empty().html('<h3>Errors</h3>');
+                        if (data.status == 400) {
+                            let errors = JSON.parse(data.responseText);
+                            let err_ul = $(document.createElement('ul')).appendTo(error_container);
+                            for (let i of errors) {
+                                $(document.createElement('li')).text(i).appendTo(err_ul);
+                            }
+                        } else {
+                            error_container.html(data.responseText);
+                        }
+                    });
+            });
+        });
+    </script>
+</fieldset>
+{% endblock %}
